@@ -6,10 +6,7 @@ class Database{
     private $pass="";
     private $name="ims";
     private $conn;
-    private $tableDefinition="id INT AUTO_INCREMENT PRIMARY KEY,
-                              prd_name VARCHAR(30) NOT NULL,
-                              serial_no INT ";
-
+   
 
 
     public function __construct(){

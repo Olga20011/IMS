@@ -2,7 +2,7 @@
 
 // create_table.php (for example)
 
-include_once 'C:\Folder\htdocs\IMS\lib\Database.php'; // Include the file where Database class is defined
+include_once 'Database.php'; // Include the file where Database class is defined
 
 $db = new Database(); // Create an instance of the Database class
 
