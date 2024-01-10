@@ -3,8 +3,8 @@ namespace lib;
 
 class Database{
     private $host="localhost";
-    private $user="developer";
-    private $pass="Araknerd";
+    private $user="root";
+    private $pass="";
     private $name="ims";
     private $conn;
    
