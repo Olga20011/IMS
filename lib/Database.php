@@ -38,6 +38,14 @@ class Database{
             echo "Table '$tableName' already exists <br>";
         }
     }
+
+    public function PreparedStatement($query, $param){
+        $this->prepare($query);
+        if(!empty($params)){
+            $this->bind_params($params);
+        }
+        return $this->execute();
+    }
 }
 
 ?>
