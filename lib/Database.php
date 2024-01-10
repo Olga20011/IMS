@@ -1,10 +1,10 @@
 <?php
-namespace IMS;
+namespace lib;
 
 class Database{
     private $host="localhost";
-    private $user="root";
-    private $pass="";
+    private $user="developer";
+    private $pass="Araknerd";
     private $name="ims";
     private $conn;
    
@@ -18,24 +18,29 @@ class Database{
         }
     
     }
-
-    public function tableExists(){
-        $sql = "SHOW TABLES LIKE 'products'"  ;
+    public function tableExists($tableName){
+        $sql = "SHOW TABLES LIKE '$tableName'";
         $result = $this->conn->query($sql);
         return $result->num_rows > 0;
     }
     
+    
     public function createTable($tables){
-        foreach($tables as $tableName =>$tableDefinition)
-        if(!$this->tableExists($tableName)){
-            $sql= "CREATE TABLE $tableName ($tableDefinition)";
-            if($this->conn->query($sql)==TRUE){
-                echo "Table '$tableName' created successfully <br>";
+        foreach($tables as $tableName =>$tableDefinition){
+            echo $tableName ."<br>";
+            // echo $tableDefinition."<br>";
+
+            if(!$this->tableExists($tableName)){
+                $sql= "CREATE TABLE $tableName ($tableDefinition)";
+                echo $sql;
+                if($this->conn->query($sql)===TRUE){
+                    echo "Table '$tableName' created successfully <br>";
+                }else{
+                    echo "Error creating table '$tableName': " . $this->conn->error . "<br>" ;    
+                }
             }else{
-                echo "Error creating table '$tableName': " . $this->conn->error . "<br>" ;    
+                echo "Table '$tableName' already exists <br>";
             }
-        }else{
-            echo "Table '$tableName' already exists <br>";
         }
     }
 }
