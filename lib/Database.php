@@ -7,6 +7,8 @@ class Database{
     private $pass="";
     private $name="ims";
     private $conn;
+
+    // private static $instance;
    
 
 
@@ -18,6 +20,7 @@ class Database{
         }
     
     }
+
     public function tableExists($tableName){
         $sql = "SHOW TABLES LIKE '$tableName'";
         $result = $this->conn->query($sql);
