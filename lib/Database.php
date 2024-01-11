@@ -7,6 +7,8 @@ class Database{
     private $pass="";
     private $name="ims";
     private $conn;
+
+    // private static $instance;
    
 
 
@@ -18,6 +20,7 @@ class Database{
         }
     
     }
+
     public function tableExists($tableName){
         $sql = "SHOW TABLES LIKE '$tableName'";
         $result = $this->conn->query($sql);
@@ -42,6 +45,14 @@ class Database{
                 echo "Table '$tableName' already exists <br>";
             }
         }
+    }
+
+    public function PreparedStatement($query, $param){
+        $this->prepare($query);
+        if(!empty($params)){
+            $this->bind_params($params);
+        }
+        return $this->execute();
     }
 }
 
