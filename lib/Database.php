@@ -7,6 +7,8 @@ class Database{
     private $pass="";
     private $name="ims";
     private $conn;
+    private $stmt;
+    
 
     // private static $instance;
    
@@ -47,13 +49,27 @@ class Database{
         }
     }
 
-    public function PreparedStatement($query, $param){
-        $this->prepare($query);
-        if(!empty($params)){
-            $this->bind_params($params);
-        }
-        return $this->execute();
+    public function prepare($query){
+        return $this->conn->prepare($query);
     }
+
+    public function bind_params($params){
+        // Assumiing $params is an array where keys are parameters
+
+        $types = implode('', array_keys($params));
+        $values = array_values($params);
+
+        $stmt=$this->stmt;
+
+        $stmt->bind_param($types, ...$values);
+    }
+
+    public function execute(){
+        $stmt = $this->stmt;
+        $stmt->execute();
+        return $stmt->affected_row();
+    }
+
 }
 
 ?>
