@@ -27,7 +27,7 @@ class Inventory {
                             product_id INT(11) NOT NULL, 
                             quantity INT(11) NOT NULL',   
         ];
-        $this->prd->createProductTables($tables);
+        // $this->prd->createProductTables($tables);
     }
 }
 
