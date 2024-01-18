@@ -49,7 +49,6 @@ class Products{
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
         ];
-        // $this->createProductTables($tables);
+        $this->createProductTables($tables);
     }
 }
-?>

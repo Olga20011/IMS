@@ -72,4 +72,3 @@ $crud = new Crud();
 // $db->createTable($tables);
 
 
-?>
