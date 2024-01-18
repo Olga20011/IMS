@@ -48,8 +48,7 @@ class Crud{
         $stmt = $this->db->prepare($sql);
         
         if ($stmt === false) {
-            echo "Error preparing statement: " . $this->db->error;
-            return false;
+            echo "Error preparing statement: " ;
         }
         
         // Assuming all values are strings, adjust as needed
@@ -127,4 +126,4 @@ class Crud{
    
 
 
-?>
+

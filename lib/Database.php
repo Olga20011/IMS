@@ -23,6 +23,11 @@ class Database{
     
     }
 
+    public function query($sql) {
+        return mysqli_query($this->conn, $sql);
+    
+    }
+
     public function tableExists($tableName){
         $sql = "SHOW TABLES LIKE '$tableName'";
         $result = $this->conn->query($sql);
@@ -31,6 +36,7 @@ class Database{
     
     
     public function createTable($tables){
+        if (is_array($tables)){
         foreach($tables as $tableName =>$tableDefinition){
             echo $tableName ."<br>";
             // echo $tableDefinition."<br>";
@@ -48,6 +54,7 @@ class Database{
             }
         }
     }
+}
 
     public function prepare($query){
         return $this->conn->prepare($query);
@@ -72,4 +79,3 @@ class Database{
 
 }
 
-?>
