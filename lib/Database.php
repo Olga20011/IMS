@@ -1,11 +1,10 @@
 <?php
 namespace lib;
 
+use lib\Config;
+include_once 'Config.php';
 class Database{
-    private $host="localhost";
-    private $user="root";
-    private $pass="";
-    private $name="ims";
+
     private $conn;
     private $stmt;
     
@@ -15,12 +14,25 @@ class Database{
 
 
     public function __construct(){
-        $this->conn = new \mysqli($this->host ,$this->user, $this->pass, $this->name );
+     
+
+        $config = new Config();
+      
+
+        $databaseConfig = $config->getDatabaseConfig();
+      
+        
+        // Access individual values
+        $dbHost = $databaseConfig['host'];
+        $dbUser = $databaseConfig['user'];
+        $dbPass = $databaseConfig['pass'];
+        $dbName = $databaseConfig['name'];
+        $this->conn = new \mysqli($dbHost ,$dbUser, $dbPass, $dbName );
 
         if($this->conn->connect_error){
             die("Connection failed" . $this->conn->connect_error);
         }
-    
+        
     }
 
     public function query($sql) {
