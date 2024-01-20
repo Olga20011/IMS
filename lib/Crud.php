@@ -1,129 +1,165 @@
-<?php 
+<?php
 
 namespace lib;
 
 require_once 'Database.php';
 
-class Crud{
+class Crud {
 
     private $db;
-    public function  __construct(){
-        $this->db= new Database();
 
+    public function __construct() {
+        $this->db = new Database();
     }
 
-    public function create($tables, $data){
-        $columns= implode(', ', array_keys($data));
-        $placeholders = implode (', ', array_fill(0, count($data), '?'));
-        
-        $sql="INSERT INTO $tables ($columns) VALUES ($placeholders)";
+    public function create($table, $data) {
+        $columns = implode(', ', array_keys($data));
+        $placeholders = implode(', ', array_fill(0, count($data), '?'));
 
-        $stmt= $this->db->prepare($sql);
+        $sql = "INSERT INTO $table ($columns) VALUES ($placeholders)";
+
+        $stmt = $this->db->prepare($sql);
 
         $values = array_values($data);
-        $types = str_repeat('s' , count($values));
+        $types = str_repeat('s', count($values));
 
         $stmt->bind_param($types, ...$values);
 
         $stmt->execute();
 
         return $stmt->affected_rows;
-        
-
     }
 
-    public function update($table, $data, $condition){
+    public function update($table, $data, $condition) {
         $setClause = '';
+        $values = array();
+        $bindTypes = '';
+    
         foreach ($data as $column => $value) {
             // Properly format values (string values should be enclosed in quotes)
-            $formattedValue = is_string($value) ? "'$value'" : $value;
-            $setClause .= "$column = $formattedValue, ";
+            $setClause .= "$column = ?, ";
+            $values[] = $value;
+    
+            // Adjust the bind types based on the type of value
+            if (is_int($value)) {
+                $bindTypes .= 'i';
+            } else {
+                $bindTypes .= 's';
+            }
         }
-        $setClause = rtrim($setClause,',');  // Remove trailing comma
-        
+    
+        $setClause = rtrim($setClause, ', ');  // Remove trailing comma and space
+    
         $sql = "UPDATE $table SET $setClause WHERE $condition";
-        print($sql);
-        // Debugging: echo "SQL Query: $sql";
-        
+    
         $stmt = $this->db->prepare($sql);
-        
+    
         if ($stmt === false) {
-            echo "Error preparing statement: " ;
+            echo "Error preparing statement: ";
         }
-        
-        // Assuming all values are strings, adjust as needed
-        $bindTypes = str_repeat('s', count($data));
-        $values = array_values($data);
-        
+    
         // Bind parameters
         $stmt->bind_param($bindTypes, ...$values);
-        
+    
         // Execute update
         $stmt->execute();
-        
+    
         // Check for success
         if ($stmt->errno) {
             echo "Error executing statement: " . $stmt->error;
             return false;
         }
-        
+    
         $success = $stmt->affected_rows > 0;
-        
+    
         // Close the statement
         $stmt->close();
-        
+    
         return $success;
     }
     
-    
-    
-    
+    public function readData($tableName){
+        $sql= "SELECT * FROM $tableName";
+        // print("result"); 
 
-        
+        $stmt= $this->db->prepare($sql);
 
+        // print($stmt);
+
+        if(!$stmt){
+            die("Error in preparing statement");
+        }
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $data = [];
+
+        while ($row = $result->fetch_assoc()){
+            $data[] = $row;
+            // print_r($row);
+        }
+        return $data;
 
     }
+    public function deleteData($tableName, $primaryKeyValue){
+        $sql = "DELETE FROM $tableName WHERE id= ?";
 
+        $stmt = $this->db->prepare($sql);
 
+        if(!$stmt){
+            die("Error in prearing statement");
+        }
 
+        $stmt->bind_param('i' , $primaryKeyValue);
 
+        $success = $stmt->execute();
 
-    $tables='products';
-    $data= array(
-        'prd_name'=> 'soda',
-        'serial_no'=>2334556,
-        'description'=> 'This is the best soda i have taken in a long time',
-        'price'=>2500 ,
-        'quantity'=>5,
-        'category_id'=>1,
-        'created_at'=>'2023-02-12',
-        'updated_at'=>'2024-01-01',
+        if ($success) {
+            echo "Data has been successfully deleted.";
+        } else {
+            echo "Error deleting data.";
+        }
 
-    );
-
-    $crud = new Crud();
-
-    $result=$crud->create($tables, $data);
-
-    if($result !==false){
-        echo "User inserted successfully. Affected row:$result";
-
-    }else{
-        echo "Error inserting user.";
     }
+}
+
+// Instantiate the Crud class
+$crud = new Crud();
 
 
-    $table = 'products';
-    $data = array(
-        'quantity' => 10,
-        'prd_name' => 'coca cola'
-    );
-    $condition = 'id = 1';
-    
-    $result = $crud->update($table, $data, $condition);
-    
-    
-   
+$tables = 'products';
+$data = array(
+    'prd_name' => 's',
+    'serial_no' => "i",
+    'description' => 'i',
+    'price' => 'i',
+    'quantity' => 'i',
+    'category_id' => 'i',
+    'created_at' => '2023-02-12',
+    'updated_at' => '2024-01-01',
+);
 
+// Perform create operation
+$result = $crud->create($tables, $data);
 
+if ($result !== false) {
+    echo "User inserted successfully. Affected row: $result";
+} else {
+    echo "Error inserting user.";
+}
 
+// Example data for update operation
+$table = 'products';
+
+$data = array('quantity' => "9", 
+'prd_name' => "Fanta "
+);
+$condition = ' id = 8';
+
+// Perform update operation
+$result = $crud->update($table, $data, $condition);
+
+$crud = new Crud();
+$data = $crud->readData("products");
+$crud->deleteData('products', 7);
